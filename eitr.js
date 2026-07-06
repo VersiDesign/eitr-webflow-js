@@ -881,6 +881,159 @@ function showSlide1Frame3() {
 
 
   // -----------------------------
+  // EHITR slide 2 illustration animation
+  // -----------------------------
+  const ehitrSlide2Image = isEhitrRangePage
+    ? images.find(item => item.index === 1)?.img || null
+    : null;
+
+  const ehitrSlide2Frames = ehitrSlide2Image
+    ? {
+        frame1: ehitrSlide2Image.querySelector(
+          ".label-illo-frame.frame-1"
+        ),
+        frame2: ehitrSlide2Image.querySelector(
+          ".label-illo-frame.frame-2"
+        ),
+        frame3: ehitrSlide2Image.querySelector(
+          ".label-illo-frame.frame-3"
+        ),
+        frame4: ehitrSlide2Image.querySelector(
+          ".label-illo-frame.frame-4"
+        ),
+        frame5: ehitrSlide2Image.querySelector(
+          ".label-illo-frame.frame-5"
+        ),
+        frame6: ehitrSlide2Image.querySelector(
+          ".label-illo-frame.frame-6"
+        )
+      }
+    : null;
+
+  const hasEhitrSlide2Animation =
+    ehitrSlide2Frames &&
+    ehitrSlide2Frames.frame1 &&
+    ehitrSlide2Frames.frame2 &&
+    ehitrSlide2Frames.frame3 &&
+    ehitrSlide2Frames.frame4 &&
+    ehitrSlide2Frames.frame5 &&
+    ehitrSlide2Frames.frame6;
+
+  const ehitrSlide2MinFrameDuration = 150;
+  const ehitrSlide2MaxFrameDuration = 700;
+  const ehitrSlide2OverlayFrameKeys = [
+    "frame2",
+    "frame3",
+    "frame4",
+    "frame5",
+    "frame6"
+  ];
+
+  const ehitrSlide2Timers = new Set();
+
+  let ehitrSlide2IsActive = false;
+  let ehitrSlide2CurrentFrameKey = null;
+
+  function setEhitrSlide2Timer(callback, duration) {
+    const timer = setTimeout(function () {
+      ehitrSlide2Timers.delete(timer);
+      callback();
+    }, duration);
+
+    ehitrSlide2Timers.add(timer);
+
+    return timer;
+  }
+
+  function clearEhitrSlide2Timers() {
+    ehitrSlide2Timers.forEach(timer => clearTimeout(timer));
+    ehitrSlide2Timers.clear();
+  }
+
+  function getEhitrSlide2RandomDuration() {
+    return (
+      ehitrSlide2MinFrameDuration +
+      Math.random() *
+        (ehitrSlide2MaxFrameDuration - ehitrSlide2MinFrameDuration)
+    );
+  }
+
+  function getEhitrSlide2RandomFrameKey() {
+    const availableFrames = ehitrSlide2OverlayFrameKeys.filter(
+      frameKey => frameKey !== ehitrSlide2CurrentFrameKey
+    );
+
+    return availableFrames[
+      Math.floor(Math.random() * availableFrames.length)
+    ];
+  }
+
+  function clearEhitrSlide2OverlayFrames() {
+    if (!hasEhitrSlide2Animation) return;
+
+    ehitrSlide2OverlayFrameKeys.forEach(frameKey => {
+      ehitrSlide2Frames[frameKey].classList.remove("is-active");
+    });
+  }
+
+  function showEhitrSlide2Frame(frameKey) {
+    if (
+      !hasEhitrSlide2Animation ||
+      !ehitrSlide2Frames[frameKey]
+    ) {
+      return;
+    }
+
+    clearEhitrSlide2OverlayFrames();
+
+    ehitrSlide2Frames.frame1.classList.add("is-active");
+    ehitrSlide2Frames[frameKey].classList.add("is-active");
+    ehitrSlide2CurrentFrameKey = frameKey;
+  }
+
+  function showEhitrSlide2DefaultFrame() {
+    if (!hasEhitrSlide2Animation) return;
+
+    clearEhitrSlide2OverlayFrames();
+    ehitrSlide2Frames.frame1.classList.add("is-active");
+    ehitrSlide2CurrentFrameKey = null;
+  }
+
+  function playEhitrSlide2Sequence() {
+    if (!ehitrSlide2IsActive || !hasEhitrSlide2Animation) return;
+
+    showEhitrSlide2Frame(getEhitrSlide2RandomFrameKey());
+
+    setEhitrSlide2Timer(function () {
+      playEhitrSlide2Sequence();
+    }, getEhitrSlide2RandomDuration());
+  }
+
+  function activateEhitrSlide2Animation() {
+    if (!hasEhitrSlide2Animation) return;
+
+    ehitrSlide2IsActive = true;
+
+    clearEhitrSlide2Timers();
+    showEhitrSlide2DefaultFrame();
+    playEhitrSlide2Sequence();
+  }
+
+  function deactivateEhitrSlide2Animation() {
+    if (!hasEhitrSlide2Animation) return;
+
+    ehitrSlide2IsActive = false;
+
+    clearEhitrSlide2Timers();
+    showEhitrSlide2DefaultFrame();
+  }
+
+  if (hasEhitrSlide2Animation) {
+    showEhitrSlide2DefaultFrame();
+  }
+
+
+  // -----------------------------
   // Slide 6 illustration animation
   // -----------------------------
   const slide6Image = images.find(item => item.index === 5)?.img || null;
@@ -1611,6 +1764,12 @@ function showSlide1Frame3() {
         activateEhitrSlide1Animation();
       } else {
         deactivateEhitrSlide1Animation();
+      }
+
+      if (index === 1) {
+        activateEhitrSlide2Animation();
+      } else {
+        deactivateEhitrSlide2Animation();
       }
     }
   }
