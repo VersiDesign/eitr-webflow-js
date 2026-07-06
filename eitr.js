@@ -2225,7 +2225,7 @@ function initEitrElephantBlink() {
 // -----------------------------
 // EHITR main illustration animation
 // Wrapper:
-// .elephant-half-in-the-room.img-ehitr-main
+// .col__img-main.img-ehitr-main
 // -----------------------------
 function initEhitrMainAnimation() {
   const wraps = document.querySelectorAll(
@@ -2237,7 +2237,6 @@ function initEhitrMainAnimation() {
   const sequence = [
     { frame: "frame1a", duration: 500 },
     { frame: "frame2", duration: 100 },
-    { frame: "frame3", duration: 100 },
     { frame: "frame3", duration: 100 },
     { frame: "frame4", duration: 400 },
     { frame: "frame3", duration: 100 },
