@@ -2038,6 +2038,10 @@ function showSlide1Frame3() {
         showLabelsAnimationFrame(currentStep);
 
         if (sequenceIndex === labelsAnimationSequence.length - 1) {
+          setLabelsAnimationTimer(function () {
+            showLabelsAnimationDefaultFrame();
+          }, currentStep.duration);
+
           return;
         }
 
