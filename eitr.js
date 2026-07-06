@@ -1892,6 +1892,168 @@ function showSlide1Frame3() {
       .filter(item => item.index !== null)
       .sort((a, b) => a.index - b.index);
 
+    const labelsAnimationWrap = document.querySelector(
+      ".ask-the-elephant__labels-img"
+    );
+
+    const labelsAnimationFrames = labelsAnimationWrap
+      ? {
+          frame1: labelsAnimationWrap.querySelector(
+            ".label-illo-frame.frame-1"
+          ),
+          frame1a: labelsAnimationWrap.querySelector(
+            ".label-illo-frame.frame-1a"
+          ),
+          frame1b: labelsAnimationWrap.querySelector(
+            ".label-illo-frame.frame-1b"
+          ),
+          frame1c: labelsAnimationWrap.querySelector(
+            ".label-illo-frame.frame-1c"
+          ),
+          frame2: labelsAnimationWrap.querySelector(
+            ".label-illo-frame.frame-2"
+          ),
+          frame3: labelsAnimationWrap.querySelector(
+            ".label-illo-frame.frame-3"
+          ),
+          frame4: labelsAnimationWrap.querySelector(
+            ".label-illo-frame.frame-4"
+          ),
+          frame5: labelsAnimationWrap.querySelector(
+            ".label-illo-frame.frame-5"
+          ),
+          frame6: labelsAnimationWrap.querySelector(
+            ".label-illo-frame.frame-6"
+          )
+        }
+      : null;
+
+    const hasLabelsAnimation =
+      labelsAnimationFrames &&
+      labelsAnimationFrames.frame1 &&
+      labelsAnimationFrames.frame1a &&
+      labelsAnimationFrames.frame1b &&
+      labelsAnimationFrames.frame1c &&
+      labelsAnimationFrames.frame2 &&
+      labelsAnimationFrames.frame3 &&
+      labelsAnimationFrames.frame4 &&
+      labelsAnimationFrames.frame5 &&
+      labelsAnimationFrames.frame6;
+
+    const labelsAnimationSequence = [
+      { frame: "frame1a", duration: 150 },
+      { frame: "frame2", duration: 300 },
+      { frame: "frame1a", duration: 100 },
+      { frame: "frame3", duration: 100 },
+      { frame: "frame4", duration: 100 },
+      { frame: "frame5", duration: 400 },
+      { frame: "frame4", duration: 100 },
+      { frame: "frame3", duration: 100 },
+      { frame: "frame1a", duration: 100 },
+      { frame: "frame6", duration: 200 },
+      { frame: "frame1a", duration: 3500 },
+      { frame: "frame1a", duration: 400, swapFrame1bFor1c: true }
+    ];
+
+    const labelsAnimationChangingFrameKeys = [
+      "frame1a",
+      "frame2",
+      "frame3",
+      "frame4",
+      "frame5",
+      "frame6"
+    ];
+
+    const labelsAnimationTimers = new Set();
+
+    function setLabelsAnimationTimer(callback, duration) {
+      const timer = setTimeout(function () {
+        labelsAnimationTimers.delete(timer);
+        callback();
+      }, duration);
+
+      labelsAnimationTimers.add(timer);
+
+      return timer;
+    }
+
+    function clearLabelsAnimationTimers() {
+      labelsAnimationTimers.forEach(timer => clearTimeout(timer));
+      labelsAnimationTimers.clear();
+    }
+
+    function clearLabelsAnimationChangingFrames() {
+      if (!hasLabelsAnimation) return;
+
+      labelsAnimationChangingFrameKeys.forEach(frameKey => {
+        labelsAnimationFrames[frameKey].classList.remove("is-active");
+      });
+
+      labelsAnimationFrames.frame1c.classList.remove("is-active");
+    }
+
+    function showLabelsAnimationFrame(step) {
+      if (
+        !hasLabelsAnimation ||
+        !step ||
+        !labelsAnimationFrames[step.frame]
+      ) {
+        return;
+      }
+
+      clearLabelsAnimationChangingFrames();
+
+      labelsAnimationFrames.frame1.classList.add("is-active");
+      labelsAnimationFrames[step.frame].classList.add("is-active");
+
+      if (step.swapFrame1bFor1c) {
+        labelsAnimationFrames.frame1b.classList.remove("is-active");
+        labelsAnimationFrames.frame1c.classList.add("is-active");
+      } else {
+        labelsAnimationFrames.frame1b.classList.add("is-active");
+        labelsAnimationFrames.frame1c.classList.remove("is-active");
+      }
+    }
+
+    function showLabelsAnimationDefaultFrame() {
+      if (!hasLabelsAnimation) return;
+
+      clearLabelsAnimationChangingFrames();
+      labelsAnimationFrames.frame1.classList.add("is-active");
+      labelsAnimationFrames.frame1a.classList.add("is-active");
+      labelsAnimationFrames.frame1b.classList.add("is-active");
+      labelsAnimationFrames.frame1c.classList.remove("is-active");
+    }
+
+    function playLabelsAnimationOnce() {
+      if (!hasLabelsAnimation) return;
+
+      clearLabelsAnimationTimers();
+      showLabelsAnimationDefaultFrame();
+
+      let sequenceIndex = 0;
+
+      function playCurrentStep() {
+        const currentStep = labelsAnimationSequence[sequenceIndex];
+        showLabelsAnimationFrame(currentStep);
+
+        if (sequenceIndex === labelsAnimationSequence.length - 1) {
+          return;
+        }
+
+        setLabelsAnimationTimer(function () {
+          sequenceIndex += 1;
+          playCurrentStep();
+        }, currentStep.duration);
+      }
+
+      playCurrentStep();
+    }
+
+    if (hasLabelsAnimation) {
+      showLabelsAnimationDefaultFrame();
+    }
+
     let currentPosition = 1;
     let isAnimating = false;
 
@@ -1970,6 +2132,7 @@ function showSlide1Frame3() {
       moveTrackTo(currentPosition);
       setMaskHeight(currentPosition);
       showImage(realIndex);
+      playLabelsAnimationOnce();
     }
 
     function jumpToPosition(position) {
@@ -2044,6 +2207,7 @@ function showSlide1Frame3() {
       moveTrackTo(currentPosition);
       setMaskHeight(currentPosition);
       showImage(getRealIndexFromPosition(currentPosition));
+      playLabelsAnimationOnce();
 
       requestAnimationFrame(() => {
         setTrackTransition(true);
