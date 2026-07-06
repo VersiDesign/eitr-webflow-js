@@ -1,4 +1,3 @@
-<script>
 window.Webflow ||= [];
 window.Webflow.push(function () {
 
@@ -2233,4 +2232,3 @@ initEitrElephantBlink();
 initAgeGate();
 
 });
-</script>
