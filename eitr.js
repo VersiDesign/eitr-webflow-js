@@ -46,9 +46,9 @@ function initEitrHorizontalSlider() {
 
   if (!isEitrPage) return;
 
-  const slideImageClassPrefix = isEhitrRangePage
-    ? "img-ehitr-slide-"
-    : "img-eitr-slide-";
+  const slideImageClassPrefixes = isEhitrRangePage
+    ? ["img-ehitr-slide-", "img-eitr-slide-"]
+    : ["img-eitr-slide-", "img-ehitr-slide-"];
 
   const slider =
     document.querySelector(".carousel-eitr.w-slider") ||
@@ -56,15 +56,24 @@ function initEitrHorizontalSlider() {
 
   if (!slider) return;
 
+  const slideImageSelector = slideImageClassPrefixes
+    .map(prefix => `.col__img-main[class*='${prefix}']`)
+    .join(", ");
+
   const images = Array.from(
-    document.querySelectorAll(
-      `.col__img-main[class*='${slideImageClassPrefix}']`
-    )
+    document.querySelectorAll(slideImageSelector)
   )
     .map(img => {
       const slideClass = Array.from(img.classList).find(className =>
-        className.startsWith(slideImageClassPrefix)
+        slideImageClassPrefixes.some(prefix =>
+          className.startsWith(prefix)
+        )
       );
+
+      const slideImageClassPrefix =
+        slideImageClassPrefixes.find(prefix =>
+          slideClass?.startsWith(prefix)
+        ) || null;
 
       const slideNumber = slideClass
         ? parseInt(slideClass.replace(slideImageClassPrefix, ""), 10)
