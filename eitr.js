@@ -2229,7 +2229,7 @@ function initEitrElephantBlink() {
 // -----------------------------
 function initEhitrMainAnimation() {
   const wraps = document.querySelectorAll(
-    ".elephant-half-in-the-room.img-ehitr-main"
+    ".col__img-main.img-ehitr-main"
   );
 
   if (!wraps.length) return;
