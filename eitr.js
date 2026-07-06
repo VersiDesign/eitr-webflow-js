@@ -34,11 +34,21 @@ window.Webflow.push(function () {
 function initEitrHorizontalSlider() {
   const path = window.location.pathname;
 
-  const isEitrPage =
-    path.includes("range-elephant-in-the-room") ||
+  const isEitrRangePage =
+    path.includes("range-elephant-in-the-room");
+
+  const isEhitrRangePage =
     path.includes("range-elephant-half-in-the-room");
 
+  const isEitrPage =
+    isEitrRangePage ||
+    isEhitrRangePage;
+
   if (!isEitrPage) return;
+
+  const slideImageClassPrefix = isEhitrRangePage
+    ? "img-ehitr-slide-"
+    : "img-eitr-slide-";
 
   const slider =
     document.querySelector(".carousel-eitr.w-slider") ||
@@ -47,15 +57,17 @@ function initEitrHorizontalSlider() {
   if (!slider) return;
 
   const images = Array.from(
-    document.querySelectorAll(".col__img-main[class*='img-eitr-slide-']")
+    document.querySelectorAll(
+      `.col__img-main[class*='${slideImageClassPrefix}']`
+    )
   )
     .map(img => {
       const slideClass = Array.from(img.classList).find(className =>
-        className.startsWith("img-eitr-slide-")
+        className.startsWith(slideImageClassPrefix)
       );
 
       const slideNumber = slideClass
-        ? parseInt(slideClass.replace("img-eitr-slide-", ""), 10)
+        ? parseInt(slideClass.replace(slideImageClassPrefix, ""), 10)
         : null;
 
       return {
@@ -724,6 +736,138 @@ function showSlide1Frame3() {
 
   if (hasSlide4Animation) {
     showSlide4DefaultFrame();
+  }
+
+
+  // -----------------------------
+  // EHITR slide 1 illustration animation
+  // -----------------------------
+  const ehitrSlide1Image = isEhitrRangePage
+    ? images.find(item => item.index === 0)?.img || null
+    : null;
+
+  const ehitrSlide1Frames = ehitrSlide1Image
+    ? {
+        frame1: ehitrSlide1Image.querySelector(
+          ".label-illo-frame.frame-1"
+        ),
+        frame2: ehitrSlide1Image.querySelector(
+          ".label-illo-frame.frame-2"
+        ),
+        frame3: ehitrSlide1Image.querySelector(
+          ".label-illo-frame.frame-3"
+        ),
+        frame4: ehitrSlide1Image.querySelector(
+          ".label-illo-frame.frame-4"
+        )
+      }
+    : null;
+
+  const hasEhitrSlide1Animation =
+    ehitrSlide1Frames &&
+    ehitrSlide1Frames.frame1 &&
+    ehitrSlide1Frames.frame2 &&
+    ehitrSlide1Frames.frame3 &&
+    ehitrSlide1Frames.frame4;
+
+  const ehitrSlide1Sequence = [
+    { frame: "frame2", duration: 200 },
+    { frame: "frame3", duration: 400 },
+    { frame: "frame2", duration: 200 },
+    { frame: "frame4", duration: 400 }
+  ];
+
+  const ehitrSlide1Timers = new Set();
+
+  let ehitrSlide1IsActive = false;
+  let ehitrSlide1SequenceIndex = 0;
+
+  function setEhitrSlide1Timer(callback, duration) {
+    const timer = setTimeout(function () {
+      ehitrSlide1Timers.delete(timer);
+      callback();
+    }, duration);
+
+    ehitrSlide1Timers.add(timer);
+
+    return timer;
+  }
+
+  function clearEhitrSlide1Timers() {
+    ehitrSlide1Timers.forEach(timer => clearTimeout(timer));
+    ehitrSlide1Timers.clear();
+  }
+
+  function clearEhitrSlide1OverlayFrames() {
+    if (!hasEhitrSlide1Animation) return;
+
+    ehitrSlide1Sequence.forEach(step => {
+      ehitrSlide1Frames[step.frame].classList.remove("is-active");
+    });
+  }
+
+  function showEhitrSlide1Frame(frameKey) {
+    if (
+      !hasEhitrSlide1Animation ||
+      !ehitrSlide1Frames[frameKey]
+    ) {
+      return;
+    }
+
+    clearEhitrSlide1OverlayFrames();
+
+    ehitrSlide1Frames.frame1.classList.add("is-active");
+    ehitrSlide1Frames[frameKey].classList.add("is-active");
+  }
+
+  function showEhitrSlide1DefaultFrame() {
+    if (!hasEhitrSlide1Animation) return;
+
+    clearEhitrSlide1OverlayFrames();
+    ehitrSlide1Frames.frame1.classList.add("is-active");
+    ehitrSlide1SequenceIndex = 0;
+  }
+
+  function playEhitrSlide1Sequence() {
+    if (!ehitrSlide1IsActive || !hasEhitrSlide1Animation) return;
+
+    const currentStep =
+      ehitrSlide1Sequence[ehitrSlide1SequenceIndex];
+    showEhitrSlide1Frame(currentStep.frame);
+
+    setEhitrSlide1Timer(function () {
+      if (!ehitrSlide1IsActive) return;
+
+      ehitrSlide1SequenceIndex =
+        ehitrSlide1SequenceIndex === ehitrSlide1Sequence.length - 1
+          ? 0
+          : ehitrSlide1SequenceIndex + 1;
+
+      playEhitrSlide1Sequence();
+    }, currentStep.duration);
+  }
+
+  function activateEhitrSlide1Animation() {
+    if (!hasEhitrSlide1Animation) return;
+
+    ehitrSlide1IsActive = true;
+
+    clearEhitrSlide1Timers();
+    showEhitrSlide1DefaultFrame();
+    playEhitrSlide1Sequence();
+  }
+
+  function deactivateEhitrSlide1Animation() {
+    if (!hasEhitrSlide1Animation) return;
+
+    ehitrSlide1IsActive = false;
+
+    clearEhitrSlide1Timers();
+    showEhitrSlide1DefaultFrame();
+  }
+
+  if (hasEhitrSlide1Animation) {
+    showEhitrSlide1DefaultFrame();
   }
 
 
@@ -1403,52 +1547,62 @@ function showSlide1Frame3() {
 
     fadeInMatchingImage(images, index);
 
-    if (index === 0) {
-      activateSlide1Animation();
-    } else {
-      deactivateSlide1Animation();
+    if (isEitrRangePage) {
+      if (index === 0) {
+        activateSlide1Animation();
+      } else {
+        deactivateSlide1Animation();
+      }
+
+      if (index === 1) {
+        activateSlide2Animation();
+      } else {
+        deactivateSlide2Animation();
+      }
+
+      if (index === 2) {
+        activateSlide3Animation();
+      } else {
+        deactivateSlide3Animation();
+      }
+
+      if (index === 3) {
+        activateSlide4Animation();
+      } else {
+        deactivateSlide4Animation();
+      }
+
+      if (index === 5) {
+        activateSlide6Animation();
+      } else {
+        deactivateSlide6Animation();
+      }
+
+      if (index === 6) {
+        activateSlide7Animation();
+      } else {
+        deactivateSlide7Animation();
+      }
+
+      if (index === 8) {
+        activateSlide9Animation();
+      } else {
+        deactivateSlide9Animation();
+      }
+
+      if (index === 10) {
+        activateSlide11Animation();
+      } else {
+        deactivateSlide11Animation();
+      }
     }
 
-    if (index === 1) {
-      activateSlide2Animation();
-    } else {
-      deactivateSlide2Animation();
-    }
-
-    if (index === 2) {
-      activateSlide3Animation();
-    } else {
-      deactivateSlide3Animation();
-    }
-
-    if (index === 3) {
-      activateSlide4Animation();
-    } else {
-      deactivateSlide4Animation();
-    }
-
-    if (index === 5) {
-      activateSlide6Animation();
-    } else {
-      deactivateSlide6Animation();
-    }
-
-    if (index === 6) {
-      activateSlide7Animation();
-    } else {
-      deactivateSlide7Animation();
-    }
-
-    if (index === 8) {
-      activateSlide9Animation();
-    } else {
-      deactivateSlide9Animation();
-    }
-
-    if (index === 10) {
-      activateSlide11Animation();
-    } else {
-      deactivateSlide11Animation();
+    if (isEhitrRangePage) {
+      if (index === 0) {
+        activateEhitrSlide1Animation();
+      } else {
+        deactivateEhitrSlide1Animation();
+      }
     }
   }
 
