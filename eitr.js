@@ -2222,6 +2222,87 @@ function initEitrElephantBlink() {
   });
 }
 
+// -----------------------------
+// EHITR main illustration animation
+// Wrapper:
+// .elephant-half-in-the-room.img-ehitr-main
+// -----------------------------
+function initEhitrMainAnimation() {
+  const wraps = document.querySelectorAll(
+    ".elephant-half-in-the-room.img-ehitr-main"
+  );
+
+  if (!wraps.length) return;
+
+  const sequence = [
+    { frame: "frame1a", duration: 500 },
+    { frame: "frame2", duration: 100 },
+    { frame: "frame3", duration: 100 },
+    { frame: "frame3", duration: 100 },
+    { frame: "frame4", duration: 400 },
+    { frame: "frame3", duration: 100 },
+    { frame: "frame2", duration: 100 },
+    { frame: "frame1a", duration: 4000 }
+  ];
+
+  wraps.forEach(wrap => {
+    const frames = {
+      frame1: wrap.querySelector(".label-illo-frame.frame-1"),
+      frame1a: wrap.querySelector(".label-illo-frame.frame-1a"),
+      frame2: wrap.querySelector(".label-illo-frame.frame-2"),
+      frame3: wrap.querySelector(".label-illo-frame.frame-3"),
+      frame4: wrap.querySelector(".label-illo-frame.frame-4")
+    };
+
+    const hasAllFrames =
+      frames.frame1 &&
+      frames.frame1a &&
+      frames.frame2 &&
+      frames.frame3 &&
+      frames.frame4;
+
+    if (!hasAllFrames) return;
+
+    const changingFrameKeys = [
+      "frame1a",
+      "frame2",
+      "frame3",
+      "frame4"
+    ];
+
+    let sequenceIndex = 0;
+
+    function clearChangingFrames() {
+      changingFrameKeys.forEach(frameKey => {
+        frames[frameKey].classList.remove("is-active");
+      });
+    }
+
+    function showFrame(frameKey) {
+      clearChangingFrames();
+      frames.frame1.classList.add("is-active");
+      frames[frameKey].classList.add("is-active");
+    }
+
+    function playCurrentFrame() {
+      const currentStep = sequence[sequenceIndex];
+      showFrame(currentStep.frame);
+
+      setTimeout(function () {
+        sequenceIndex =
+          sequenceIndex === sequence.length - 1
+            ? 0
+            : sequenceIndex + 1;
+
+        playCurrentFrame();
+      }, currentStep.duration);
+    }
+
+    frames.frame1.classList.add("is-active");
+    playCurrentFrame();
+  });
+}
+
   // -----------------------------
   // Initialise
   // -----------------------------
@@ -2229,6 +2310,7 @@ initEitrHorizontalSlider();
 initAteVerticalSlider();
 initEitrChairAnimationLoops();
 initEitrElephantBlink();
+initEhitrMainAnimation();
 initAgeGate();
 
 });
