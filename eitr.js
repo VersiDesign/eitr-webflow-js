@@ -100,11 +100,44 @@ function initEitrHorizontalSlider() {
 
   let currentIndex = -1;
 
+  const bagnumsAnimationSlideByEitrSlide = {
+    3: 2,
+    6: 3,
+    9: 4,
+    11: 5
+  };
+
+  function getAnimationSlideIndex(eitrSlideNumber) {
+    if (isBagnumsRangePage) {
+      const bagnumsSlideNumber =
+        bagnumsAnimationSlideByEitrSlide[eitrSlideNumber];
+
+      return bagnumsSlideNumber ? bagnumsSlideNumber - 1 : null;
+    }
+
+    return eitrSlideNumber - 1;
+  }
+
+  function getAnimationImage(eitrSlideNumber) {
+    const animationSlideIndex =
+      getAnimationSlideIndex(eitrSlideNumber);
+
+    if (animationSlideIndex === null) return null;
+
+    return images.find(item =>
+      item.index === animationSlideIndex
+    )?.img || null;
+  }
+
+  function isAnimationSlideActive(eitrSlideNumber, activeIndex) {
+    return getAnimationSlideIndex(eitrSlideNumber) === activeIndex;
+  }
+
 
   // -----------------------------
   // Slide 1 illustration animation
   // -----------------------------
-  const slide1Image = images.find(item => item.index === 0)?.img || null;
+  const slide1Image = getAnimationImage(1);
 
   const slide1Frames = slide1Image
     ? {
@@ -289,7 +322,7 @@ function showSlide1Frame3() {
   // -----------------------------
   // Slide 2 illustration animation
   // -----------------------------
-  const slide2Image = images.find(item => item.index === 1)?.img || null;
+  const slide2Image = getAnimationImage(2);
 
   const slide2Frames = slide2Image
     ? {
@@ -489,7 +522,7 @@ function showSlide1Frame3() {
   // -----------------------------
   // Slide 3 illustration animation
   // -----------------------------
-  const slide3Image = images.find(item => item.index === 2)?.img || null;
+  const slide3Image = getAnimationImage(3);
 
   const slide3Frames = slide3Image
     ? {
@@ -635,7 +668,7 @@ function showSlide1Frame3() {
   // -----------------------------
   // Slide 4 illustration animation
   // -----------------------------
-  const slide4Image = images.find(item => item.index === 3)?.img || null;
+  const slide4Image = getAnimationImage(4);
 
   const slide4Frames = slide4Image
     ? {
@@ -1044,7 +1077,7 @@ function showSlide1Frame3() {
   // -----------------------------
   // Slide 6 illustration animation
   // -----------------------------
-  const slide6Image = images.find(item => item.index === 5)?.img || null;
+  const slide6Image = getAnimationImage(6);
 
   const slide6Frames = slide6Image
     ? {
@@ -1224,7 +1257,7 @@ function showSlide1Frame3() {
   // -----------------------------
   // Slide 7 illustration animation
   // -----------------------------
-  const slide7Image = images.find(item => item.index === 6)?.img || null;
+  const slide7Image = getAnimationImage(7);
 
   const slide7Frames = slide7Image
     ? {
@@ -1358,7 +1391,7 @@ function showSlide1Frame3() {
   // -----------------------------
   // Slide 9 illustration animation
   // -----------------------------
-  const slide9Image = images.find(item => item.index === 8)?.img || null;
+  const slide9Image = getAnimationImage(9);
 
   const slide9Frames = slide9Image
     ? {
@@ -1492,7 +1525,7 @@ function showSlide1Frame3() {
   // -----------------------------
   // Slide 11 illustration animation
   // -----------------------------
-  const slide11Image = images.find(item => item.index === 10)?.img || null;
+  const slide11Image = getAnimationImage(11);
 
   const slide11Frames = slide11Image
     ? {
@@ -1718,49 +1751,49 @@ function showSlide1Frame3() {
     fadeInMatchingImage(images, index);
 
     if (isEitrAnimationRangePage) {
-      if (index === 0) {
+      if (isAnimationSlideActive(1, index)) {
         activateSlide1Animation();
       } else {
         deactivateSlide1Animation();
       }
 
-      if (index === 1) {
+      if (isAnimationSlideActive(2, index)) {
         activateSlide2Animation();
       } else {
         deactivateSlide2Animation();
       }
 
-      if (index === 2) {
+      if (isAnimationSlideActive(3, index)) {
         activateSlide3Animation();
       } else {
         deactivateSlide3Animation();
       }
 
-      if (index === 3) {
+      if (isAnimationSlideActive(4, index)) {
         activateSlide4Animation();
       } else {
         deactivateSlide4Animation();
       }
 
-      if (index === 5) {
+      if (isAnimationSlideActive(6, index)) {
         activateSlide6Animation();
       } else {
         deactivateSlide6Animation();
       }
 
-      if (index === 6) {
+      if (isAnimationSlideActive(7, index)) {
         activateSlide7Animation();
       } else {
         deactivateSlide7Animation();
       }
 
-      if (index === 8) {
+      if (isAnimationSlideActive(9, index)) {
         activateSlide9Animation();
       } else {
         deactivateSlide9Animation();
       }
 
-      if (index === 10) {
+      if (isAnimationSlideActive(11, index)) {
         activateSlide11Animation();
       } else {
         deactivateSlide11Animation();
