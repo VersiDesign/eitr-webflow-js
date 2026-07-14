@@ -30,6 +30,7 @@ window.Webflow.push(function () {
 // Pages:
 // /range-elephant-in-the-room/
 // /range-elephant-half-in-the-room/
+// /range-bagnums/
 // -----------------------------
 function initEitrHorizontalSlider() {
   const path = window.location.pathname;
@@ -40,8 +41,15 @@ function initEitrHorizontalSlider() {
   const isEhitrRangePage =
     path.includes("range-elephant-half-in-the-room");
 
-  const isEitrPage =
+  const isBagnumsRangePage =
+    path.includes("range-bagnums");
+
+  const isEitrAnimationRangePage =
     isEitrRangePage ||
+    isBagnumsRangePage;
+
+  const isEitrPage =
+    isEitrAnimationRangePage ||
     isEhitrRangePage;
 
   if (!isEitrPage) return;
@@ -1709,7 +1717,7 @@ function showSlide1Frame3() {
 
     fadeInMatchingImage(images, index);
 
-    if (isEitrRangePage) {
+    if (isEitrAnimationRangePage) {
       if (index === 0) {
         activateSlide1Animation();
       } else {
