@@ -101,10 +101,9 @@ function initEitrHorizontalSlider() {
   let currentIndex = -1;
 
   const bagnumsAnimationSlideByEitrSlide = {
+    1: 1,
     3: 2,
-    6: 3,
-    9: 4,
-    11: 5
+    6: 3
   };
 
   function getAnimationSlideIndex(eitrSlideNumber) {
