@@ -2704,17 +2704,25 @@ function initEitrChairAnimationLoops() {
 
 // -----------------------------
 // EITR elephant random blink
-// Wrapper:
+// Wrappers:
 // .col__img-main.img-eitr-elephant
-// -----------------------------
-// -----------------------------
-// EITR elephant random blink
-// Wrapper:
-// .col__img-main.img-eitr-elephant
+// .hp__elephant
 // -----------------------------
 function initEitrElephantBlink() {
-  const elephants = document.querySelectorAll(".col__img-main.img-eitr-elephant");
-  if (!elephants.length) return;
+  const elephantConfigs = [
+    {
+      wrapperSelector: ".col__img-main.img-eitr-elephant",
+      bodySelector: ".elephant-blink-img-1a",
+      openEyeSelector: ".elephant-blink-img-1b",
+      closedEyeSelector: ".elephant-blink-img-2"
+    },
+    {
+      wrapperSelector: ".hp__elephant",
+      bodySelector: ".hp-elephant-blink-img-1a",
+      openEyeSelector: ".hp-elephant-blink-img-1b",
+      closedEyeSelector: ".hp-elephant-blink-img-2"
+    }
+  ];
 
   const firstBlinkDelay = 1000;
   const minBlinkInterval = 2000;
@@ -2725,30 +2733,34 @@ function initEitrElephantBlink() {
     return minBlinkInterval + Math.random() * maxExtraRandomDelay;
   }
 
-  elephants.forEach(elephant => {
-    const body = elephant.querySelector(".elephant-blink-img-1a");
-    const openEye = elephant.querySelector(".elephant-blink-img-1b");
-    const closedEye = elephant.querySelector(".elephant-blink-img-2");
+  elephantConfigs.forEach(config => {
+    const elephants = document.querySelectorAll(config.wrapperSelector);
 
-    if (!body || !openEye || !closedEye) return;
+    elephants.forEach(elephant => {
+      const body = elephant.querySelector(config.bodySelector);
+      const openEye = elephant.querySelector(config.openEyeSelector);
+      const closedEye = elephant.querySelector(config.closedEyeSelector);
 
-    function doBlink() {
-      elephant.classList.add("is-blinking");
+      if (!body || !openEye || !closedEye) return;
 
-      setTimeout(function () {
-        elephant.classList.remove("is-blinking");
-        scheduleNextBlink(getRandomDelay());
-      }, blinkDuration);
-    }
+      function doBlink() {
+        elephant.classList.add("is-blinking");
 
-    function scheduleNextBlink(delay) {
-      setTimeout(doBlink, delay);
-    }
+        setTimeout(function () {
+          elephant.classList.remove("is-blinking");
+          scheduleNextBlink(getRandomDelay());
+        }, blinkDuration);
+      }
 
-    elephant.classList.remove("is-blinking");
+      function scheduleNextBlink(delay) {
+        setTimeout(doBlink, delay);
+      }
 
-    // Force first blink after 1 second.
-    scheduleNextBlink(firstBlinkDelay);
+      elephant.classList.remove("is-blinking");
+
+      // Force first blink after 1 second.
+      scheduleNextBlink(firstBlinkDelay);
+    });
   });
 }
 
