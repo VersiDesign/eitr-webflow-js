@@ -2765,6 +2765,70 @@ function initEitrElephantBlink() {
 }
 
 // -----------------------------
+// Homepage clock animation
+// Wrapper:
+// .hp__clock
+// -----------------------------
+function initHomepageClockAnimation() {
+  const clocks = document.querySelectorAll(".hp__clock");
+  if (!clocks.length) return;
+
+  const sequence = [
+    "clock-img-1b",
+    "clock-img-2",
+    "clock-img-3",
+    "clock-img-2",
+    "clock-img-1b",
+    "clock-img-4",
+    "clock-img-5",
+    "clock-img-4"
+  ];
+
+  const frameDuration = 300;
+
+  function showFrame(frames, frameClass) {
+    frames.changingFrames.forEach(frame => frame.classList.remove("is-active"));
+    frames.baseFrame.classList.add("is-active");
+
+    const activeFrame = frames.changingFrames.find(frame =>
+      frame.classList.contains(frameClass)
+    );
+
+    if (activeFrame) {
+      activeFrame.classList.add("is-active");
+    }
+  }
+
+  clocks.forEach(clock => {
+    const frames = {
+      baseFrame: clock.querySelector(".clock-img-1a"),
+      changingFrames: Array.from(
+        clock.querySelectorAll(
+          ".clock-img-1b, .clock-img-2, .clock-img-3, .clock-img-4, .clock-img-5"
+        )
+      )
+    };
+
+    if (!frames.baseFrame || frames.changingFrames.length !== 5) return;
+
+    let sequenceIndex = 0;
+
+    function playCurrentFrame() {
+      showFrame(frames, sequence[sequenceIndex]);
+
+      setTimeout(function () {
+        sequenceIndex =
+          sequenceIndex === sequence.length - 1 ? 0 : sequenceIndex + 1;
+
+        playCurrentFrame();
+      }, frameDuration);
+    }
+
+    playCurrentFrame();
+  });
+}
+
+// -----------------------------
 // EHITR main illustration animation
 // Wrapper:
 // .col__img-main.img-ehitr-main
@@ -2851,6 +2915,7 @@ initEitrHorizontalSlider();
 initAteVerticalSlider();
 initEitrChairAnimationLoops();
 initEitrElephantBlink();
+initHomepageClockAnimation();
 initEhitrMainAnimation();
 initAgeGate();
 
